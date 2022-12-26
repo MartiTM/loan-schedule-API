@@ -3,18 +3,18 @@ package utils
 import "testing"
 
 func TestGetInterestRatePerTermBasic(t *testing.T) {
-	ans := GetInterestRatePerTerm(0.0425)
-	wanted := 0.0425/12
+	ans := GetInterestRatePerTerm(0.06)
+	wanted := 0.06/12
 	if ans != wanted {
 		t.Errorf("GetInterestRatePerTerm(0.0425) = %v; want %v", ans, wanted)
 	}
 }
 
 func TestGetDueDateAmountBasic(t *testing.T) {
-	ans := GetDueDateAmount(5000000, 0.0425, 4)
+	ans := GetDueDateAmount(5000000, GetInterestRatePerTerm(0.0425), 4)
 	wanted := 1261087
 	if ans != wanted {
-		t.Errorf("GetDueDateAmount(5000000, 0.0425, 4) = %v; want %v", ans, wanted)
+		t.Errorf("GetDueDateAmount(5000000, GetInterestRatePerTerm(0.0425), 4) = %v; want %v", ans, wanted)
 	}
 }
 

@@ -1,3 +1,3 @@
-module github.com/MartiTM/AdventOfCode2022
+module github.com/MartiTM/loan-schedule-API
 
 go 1.19
