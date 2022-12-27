@@ -1,16 +1,17 @@
 package scheduler
 
 import (
-	"fmt"
 	"encoding/json"
+	"fmt"
+	"strings"
 
 	"github.com/MartiTM/loan-schedule-API/utils"
 )
 
 type SchedulerInput struct {
-	BorrowedCapital int // in cents
-	AnnualInterestRate float64
-	Terms int
+	BorrowedCapital 	int 	`json:"capital emprunté"` // in cents
+	AnnualInterestRate 	float64 `json:"taux d intérêt annuel"`
+	Terms 				int		`json:"nombre d échéance"`
 }
 
 type SchedulerOutput struct {
@@ -18,7 +19,7 @@ type SchedulerOutput struct {
 }
 
 type TermsOutput struct {
-	DueDateAmount 				int `json:"montant de l'échéance"`
+	DueDateAmount 				int `json:"montant de l échéance"`
 	RemainingCapitalDue 		int `json:"capital restant dû"`
 	InterestAmount 				int `json:"montant des intérêts"`
 	CapitalAmount 				int `json:"montant du capital"`
@@ -30,7 +31,7 @@ func (input SchedulerInput) GetSchedulerOutput() (SchedulerOutput, error) {
 		return SchedulerOutput{}, fmt.Errorf("SchedulerInput are not valid, err : %v", err)
 	}
 
-	output := SchedulerOutput{make([]TermsOutput, input.Terms)}
+	output := SchedulerOutput{make([]TermsOutput, 0)}
 
 	remainingCapital := input.BorrowedCapital
 
@@ -71,4 +72,22 @@ func (input SchedulerInput) isValid() (bool, error) {
 
 func (output SchedulerOutput) ToJson() ([]byte, error) {
 	return json.Marshal(output)
+}
+
+func (output SchedulerOutput) MarshalJSON() ([]byte, error) {
+	var termsStrings []string
+	for _, term := range output.Terms {
+	  innerObjectBytes, err := json.Marshal(term)
+	  if err != nil {
+		return nil, err
+	  }
+	  termsStrings = append(termsStrings, string(innerObjectBytes))
+	}
+	return []byte("[" + strings.Join(termsStrings, ",") + "]"), nil
+  }
+
+func FromJsonToInput(data []byte) (SchedulerInput, error) {
+	var input SchedulerInput
+	err := json.Unmarshal(data, &input)
+	return input, err
 }

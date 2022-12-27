@@ -8,7 +8,10 @@ func GetInterestRatePerTerm(annualInterestRate float64) float64 {
 
 func GetDueDateAmount(totalMoney int, interestRate float64, terms int) int {
 	calc := float64(totalMoney) * (interestRate / (1 - math.Pow(1 + interestRate, -float64(terms))))
-	return int(math.Round(calc))
+	if terms == 1 {
+		return int(math.Ceil(calc))
+	}
+	return int(math.Floor(calc))
 }
 
 func GetInterestAmountByTerm(remainingMoney int, interestRate float64) int {
