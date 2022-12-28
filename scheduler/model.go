@@ -27,7 +27,7 @@ type TermsOutput struct {
 }
 
 func (input SchedulerInput) GetSchedulerOutput() (SchedulerOutput, error) {
-	if ok, err := input.isValid(); !ok {
+	if ok, err := input.IsValid(); !ok {
 		return SchedulerOutput{}, fmt.Errorf("SchedulerInput are not valid, err : %v", err)
 	}
 
@@ -54,7 +54,7 @@ func (input SchedulerInput) GetSchedulerOutput() (SchedulerOutput, error) {
 	return output, nil
 }
 
-func (input SchedulerInput) isValid() (bool, error) {
+func (input SchedulerInput) IsValid() (bool, error) {
 	if input.BorrowedCapital <= 0 {
 		return false, fmt.Errorf("borrowedCapital <= 0")
 	}
