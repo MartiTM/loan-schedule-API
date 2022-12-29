@@ -1,8 +1,6 @@
 package scheduler_test
 
 import (
-	"bytes"
-	"encoding/json"
 	"reflect"
 	"testing"
 
@@ -10,7 +8,7 @@ import (
 )
 
 func TestFromJsonToSchedulerInputBasic(t *testing.T) {
-	data := []byte(`{"capital emprunté": 5000000,"taux d intérêt annuel": 0.0425,"nombre d échéance": 4}`)
+	data := []byte(`{"capital emprunté":5000000,"taux d'intérêt annuel": 0.0425,"nombre d'échéance": 4}`)
 	input, err := scheduler.FromJsonToInput(data)
 
 	if err != nil {
@@ -20,11 +18,9 @@ func TestFromJsonToSchedulerInputBasic(t *testing.T) {
 
 	wanted := scheduler.SchedulerInput{5000000,0.0425,4}
 
-	inputJson, _ := json.Marshal(input)
-	wantedJson, _ := json.Marshal(wanted)
-
-	if !bytes.Equal(inputJson, wantedJson) {
-		t.Errorf("found :\n %q;\n want :\n %q", inputJson, wantedJson)
+	if ! reflect.DeepEqual(input, wanted) {
+		t.Errorf("Error : want : %v, found : %v", wanted, input)
+		return
 	}
 }
 

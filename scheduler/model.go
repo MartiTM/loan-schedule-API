@@ -9,9 +9,9 @@ import (
 )
 
 type SchedulerInput struct {
-	BorrowedCapital 	int 	`json:"capital emprunté"` // in cents
-	AnnualInterestRate 	float64 `json:"taux d intérêt annuel"`
-	Terms 				int		`json:"nombre d échéance"`
+	BorrowedCapital 	int 	// `json:"capital emprunté"` // in cents
+	AnnualInterestRate 	float64 // `json:"taux d'intérêt annuel"`
+	Terms 				int		// `json:"nombre d'échéance"`
 }
 
 type SchedulerOutput struct {
@@ -90,4 +90,32 @@ func FromJsonToInput(data []byte) (SchedulerInput, error) {
 	var input SchedulerInput
 	err := json.Unmarshal(data, &input)
 	return input, err
+}
+
+func (input *SchedulerInput) UnmarshalJSON(b []byte) error {
+    var testObject map[string]interface{}
+
+    err := json.Unmarshal(b, &testObject)
+    if err != nil {
+        return err
+    }
+
+    borrowedCapital, ok := testObject["capital emprunté"].(float64)
+    if !ok {
+        return fmt.Errorf("\"capital emprunté\" is not a int")
+    }
+    annualInterestRate, ok := testObject["taux d'intérêt annuel"].(float64)
+    if !ok {
+        return fmt.Errorf("\"taux d'intérêt annuel\" is not a float64")
+    }
+    terms, ok := testObject["nombre d'échéance"].(float64)
+    if !ok {
+        return fmt.Errorf("\"nombre d'échéance\" is not a int")
+    }
+
+    input.BorrowedCapital = int(borrowedCapital)
+    input.AnnualInterestRate = annualInterestRate
+    input.Terms = int(terms)
+
+    return nil
 }
