@@ -2,6 +2,7 @@ package handler
 
 import (
 	"encoding/json"
+	"fmt"
 	"net/http"
 
 	"github.com/MartiTM/loan-schedule-API/scheduler"
@@ -20,20 +21,19 @@ func CalcScheduler(res http.ResponseWriter, req *http.Request) {
 	err := json.NewDecoder(payload).Decode(&input)
 	
 	if err != nil {
-		HandlerMessage := []byte(`{
-		"success": false,
-		"message": "Error parsing the input data",
-		}`)
+		HandlerMessage := []byte(fmt.Sprintf(`{
+			"success": false,
+			"message": "Error parsing the input data, err : %v",
+			}`, err))
 		utils.ReturnJsonResponse(res, http.StatusInternalServerError, HandlerMessage)
 		return
 	}
 	
-	// a présicer
-	if ok, _ := input.IsValid(); !ok {
-		HandlerMessage := []byte(`{
-		"success": false,
-		"message": "Error input data",
-		}`)
+	if ok, err := input.IsValid(); !ok {
+		HandlerMessage := []byte(fmt.Sprintf(`{
+			"success": false,
+			"message": "Error parsing the input data, err : %v",
+			}`, err))
 		utils.ReturnJsonResponse(res, http.StatusInternalServerError, HandlerMessage)
 		return
 	}
@@ -41,10 +41,10 @@ func CalcScheduler(res http.ResponseWriter, req *http.Request) {
 	output, err := input.GetSchedulerOutput()
 
 	if err != nil {
-		HandlerMessage := []byte(`{
-		"success": false,
-		"message": "Error calculation the output data",
-		}`)
+		HandlerMessage := []byte(fmt.Sprintf(`{
+			"success": false,
+			"message": "Error calculation the output data, err : %v",
+			}`, err))
 		utils.ReturnJsonResponse(res, http.StatusInternalServerError, HandlerMessage)
 		return
 	}
@@ -52,10 +52,10 @@ func CalcScheduler(res http.ResponseWriter, req *http.Request) {
 	outputJSON, err := json.Marshal(output)
 
 	if err != nil {
-		HandlerMessage := []byte(`{
-		"success": false,
-		"message": "Error parsing the output data",
-		}`)
+		HandlerMessage := []byte(fmt.Sprintf(`{
+			"success": false,
+			"message": "Error parsing the output data, err : %v",
+			}`, err))
 		utils.ReturnJsonResponse(res, http.StatusInternalServerError, HandlerMessage)
 		return
 	}
