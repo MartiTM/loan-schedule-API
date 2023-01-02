@@ -100,6 +100,10 @@ func (input *SchedulerInput) UnmarshalJSON(b []byte) error {
         return err
     }
 
+	if len(testObject) != 3 {
+		return fmt.Errorf("expected 3 parameters (\"capital emprunté\", \"taux d'intérêt annuel\" and \"nombre d'échéance\")")
+	}
+
     borrowedCapital, ok := testObject["capital emprunté"].(float64)
     if !ok {
         return fmt.Errorf("\"capital emprunté\" is not a int")
