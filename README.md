@@ -15,6 +15,8 @@ And the handler folder contains the api management logic
 
 # REST API
 
+Runs on port 3000
+
 ## Calculates the borrower schedule
 
 | Parameter                     | Type    | Description                                              |
