@@ -1,6 +1,7 @@
 package scheduler_test
 
 import (
+	"encoding/json"
 	"reflect"
 	"testing"
 
@@ -9,7 +10,9 @@ import (
 
 func TestFromJsonToSchedulerInputBasic(t *testing.T) {
 	data := []byte(`{"capital emprunté":5000000,"taux d'intérêt annuel": 0.0425,"nombre d'échéance": 4}`)
-	input, err := scheduler.FromJsonToInput(data)
+	
+	var input scheduler.SchedulerInput
+	err := json.Unmarshal(data, &input)
 
 	if err != nil {
 		t.Errorf("Error %v", err)

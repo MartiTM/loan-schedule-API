@@ -70,28 +70,6 @@ func (input SchedulerInput) IsValid() (bool, error) {
 	return true, nil
 }
 
-func (output SchedulerOutput) ToJson() ([]byte, error) {
-	return json.Marshal(output)
-}
-
-func (output SchedulerOutput) MarshalJSON() ([]byte, error) {
-	var termsStrings []string
-	for _, term := range output.Terms {
-	  innerObjectBytes, err := json.Marshal(term)
-	  if err != nil {
-		return nil, err
-	  }
-	  termsStrings = append(termsStrings, string(innerObjectBytes))
-	}
-	return []byte("[" + strings.Join(termsStrings, ",") + "]"), nil
-  }
-
-func FromJsonToInput(data []byte) (SchedulerInput, error) {
-	var input SchedulerInput
-	err := json.Unmarshal(data, &input)
-	return input, err
-}
-
 func (input *SchedulerInput) UnmarshalJSON(b []byte) error {
     var testObject map[string]interface{}
 
@@ -123,3 +101,15 @@ func (input *SchedulerInput) UnmarshalJSON(b []byte) error {
 
     return nil
 }
+
+func (output SchedulerOutput) MarshalJSON() ([]byte, error) {
+	var termsStrings []string
+	for _, term := range output.Terms {
+	  innerObjectBytes, err := json.Marshal(term)
+	  if err != nil {
+		return nil, err
+	  }
+	  termsStrings = append(termsStrings, string(innerObjectBytes))
+	}
+	return []byte("[" + strings.Join(termsStrings, ",") + "]"), nil
+  }
