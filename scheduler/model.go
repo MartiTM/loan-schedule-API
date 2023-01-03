@@ -112,4 +112,4 @@ func (output SchedulerOutput) MarshalJSON() ([]byte, error) {
 	  termsStrings = append(termsStrings, string(innerObjectBytes))
 	}
 	return []byte("[" + strings.Join(termsStrings, ",") + "]"), nil
-  }
+}

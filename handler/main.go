@@ -47,18 +47,18 @@ func CalcScheduler(res http.ResponseWriter, req *http.Request) {
 
 func isRequestValid(res http.ResponseWriter, req *http.Request) (bool, int, string) {
 	if req.URL.Path != "/" {
-		return true, http.StatusNotFound, "Not Found"
+		return false, http.StatusNotFound, "Not Found"
 	}
 
 	if req.Method != "POST" {
-		return true, http.StatusMethodNotAllowed, "Invalid HTTP method executed. Please use : POST"
+		return false, http.StatusMethodNotAllowed, "Invalid HTTP method executed. Please use : POST"
 	}
 	
 	if req.Header.Get("Content-type") != "application/json" {
-		return true, http.StatusUnsupportedMediaType, "Unsupported media type. Please use : application/json"
+		return false, http.StatusUnsupportedMediaType, "Unsupported media type. Please use : application/json"
 	}
 
-	return false, 0, ""
+	return true, 0, ""
 }
 
 func sendError(res http.ResponseWriter, httpCode int, errorMessage string) {
