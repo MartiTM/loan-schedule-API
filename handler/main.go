@@ -10,7 +10,8 @@ import (
 )
 
 func CalcScheduler(res http.ResponseWriter, req *http.Request) {
-	if isErr(res, req) {
+	if ok, httpCode, errorMsg := isRequestValid(res, req); !ok {
+		sendError(res, httpCode, errorMsg)
 		return
 	}
 	
@@ -19,83 +20,48 @@ func CalcScheduler(res http.ResponseWriter, req *http.Request) {
 	defer req.Body.Close()
 
 	err := json.NewDecoder(payload).Decode(&input)
-	
 	if err != nil {
-		HandlerMessage := []byte(fmt.Sprintf(`{
-			"success": false,
-			"message": "Error parsing the input data, err : %v",
-			}`, err))
-		utils.ReturnJsonResponse(res, http.StatusInternalServerError, HandlerMessage)
+		sendError(res, http.StatusInternalServerError, fmt.Sprintf("Error parsing the input data, err : %v", err))
 		return
 	}
 	
 	if ok, err := input.IsValid(); !ok {
-		HandlerMessage := []byte(fmt.Sprintf(`{
-			"success": false,
-			"message": "Error parsing the input data, err : %v",
-			}`, err))
-		utils.ReturnJsonResponse(res, http.StatusInternalServerError, HandlerMessage)
+		sendError(res, http.StatusInternalServerError, fmt.Sprintf("Error input data are not valid, err : %v", err))
 		return
 	}
 
 	output, err := input.GetSchedulerOutput()
-
 	if err != nil {
-		HandlerMessage := []byte(fmt.Sprintf(`{
-			"success": false,
-			"message": "Error calculation the output data, err : %v",
-			}`, err))
-		utils.ReturnJsonResponse(res, http.StatusInternalServerError, HandlerMessage)
+		sendError(res, http.StatusInternalServerError, fmt.Sprintf("Error calculation the output data, err : %v", err))
 		return
 	}
 
 	outputJSON, err := json.Marshal(output)
-
 	if err != nil {
-		HandlerMessage := []byte(fmt.Sprintf(`{
-			"success": false,
-			"message": "Error parsing the output data, err : %v",
-			}`, err))
-		utils.ReturnJsonResponse(res, http.StatusInternalServerError, HandlerMessage)
+		sendError(res, http.StatusInternalServerError, fmt.Sprintf("Error parsing the output data, err : %v", err))
 		return
 	}
 
 	utils.ReturnJsonResponse(res, http.StatusOK, outputJSON)
 }
 
-func isErr(res http.ResponseWriter, req *http.Request) bool {
+func isRequestValid(res http.ResponseWriter, req *http.Request) (bool, int, string) {
 	if req.URL.Path != "/" {
-
-		HandlerMessage := []byte(`{
-			"success": false,
-		 	"message": "Not Found",
-		}`)
-	  
-		utils.ReturnJsonResponse(res, http.StatusNotFound, HandlerMessage)
-		return true
+		return true, http.StatusNotFound, "Not Found"
 	}
 
 	if req.Method != "POST" {
-
-		HandlerMessage := []byte(`{
-			"success": false,
-		 	"message": "Invalid HTTP method executed. Please use : POST",
-		}`)
-	  
-		utils.ReturnJsonResponse(res, http.StatusMethodNotAllowed, HandlerMessage)
-		return true
+		return true, http.StatusMethodNotAllowed, "Invalid HTTP method executed. Please use : POST"
 	}
 	
 	if req.Header.Get("Content-type") != "application/json" {
-
-		HandlerMessage := []byte(`{
-			"success": false,
-		 	"message": "Unsupported media type. Please use : application/json",
-		}`)
-	  
-		utils.ReturnJsonResponse(res, http.StatusUnsupportedMediaType, HandlerMessage)
-		return true
+		return true, http.StatusUnsupportedMediaType, "Unsupported media type. Please use : application/json"
 	}
 
-	return false
+	return false, 0, ""
+}
+
+func sendError(res http.ResponseWriter, httpCode int, errorMessage string) {
+	HandlerMessage := []byte(fmt.Sprintf(`{"message": "%v"}`, errorMessage))
+	utils.ReturnJsonResponse(res, httpCode, HandlerMessage)
 }
