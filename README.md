@@ -1,9 +1,6 @@
 # loan-schedule-API
 
-This is a is a REST API that calculates the borrower schedule.
-
-The scheduler folder contains the calculation logic.
-And the handler folder contains the api management logic
+REST API Calculates the borrower's schedule.
 
 ## Run the app
 
