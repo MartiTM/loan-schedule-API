@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/MartiTM/loan-schedule-API/scheduler"
+	"github.com/MartiTM/loan-schedule-API/model"
 	"github.com/MartiTM/loan-schedule-API/utils"
 )
 
@@ -15,7 +15,7 @@ func CalcScheduler(res http.ResponseWriter, req *http.Request) {
 		return
 	}
 	
-	var input scheduler.SchedulerInput
+	var input model.SchedulerInput
 	payload := req.Body
 	defer req.Body.Close()
 
